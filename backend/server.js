@@ -1,52 +1,38 @@
 import express from 'express';
 import cors from 'cors';
-import 'dotenv/config';
-import db from './config/mongooseConnection.js';
-import connectCloudinary from './config/cloudinary.js';
-import userRoutes from './routes/userRoutes.js';
-import productRouter from './routes/productRoutes.js';
-import cartRouter from './routes/cartRoutes.js';
-import orderRouter from './routes/orderRoutes.js';
 
 const app = express();
 const port = process.env.PORT || 4000;
-db();
-connectCloudinary();
 
-// 🔴 Fix: Explicitly Allow CORS for Your Frontend URLs
+// ✅ Allowed Frontend URLs
 const allowedOrigins = [
     "https://online-shop-admin-rho.vercel.app",
     "https://online-shop-frontend-lemon.vercel.app"
 ];
 
-app.use(cors({
-    origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error("CORS not allowed"));
-        }
-    },
-    methods: "GET,POST,PUT,DELETE,OPTIONS",
-    allowedHeaders: "Content-Type,Authorization",
-    credentials: true
-}));
-
-// 🔴 Fix: Handle Preflight (OPTIONS) Requests
-app.options('*', cors());
+app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader("Access-Control-Allow-Origin", origin);
+        res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
+        res.setHeader("Access-Control-Allow-Credentials", "true");
+    }
+    if (req.method === "OPTIONS") {
+        return res.sendStatus(200);
+    }
+    next();
+});
 
 // Middleware
 app.use(express.json());
 
-// API Endpoints
-app.get('/', (req, res) => {
-    res.send("API working");
+// Test Route
+app.get("/", (req, res) => {
+    res.send("API is working!");
 });
-app.use('/api/user', userRoutes);
-app.use('/api/product', productRouter);
-app.use('/api/cart', cartRouter);
-app.use('/api/order', orderRouter);
 
+// Start Server
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+    console.log(`Server running on port ${port}`);
 });

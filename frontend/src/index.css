@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Macondo&family=Playwrite+VN&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+*{
+    font-family: "Exo 2", serif;
+}
+@media (max-width:640px)
+{
+    a.active{
+        background-color: black;
+        color: white;
+    }
+}

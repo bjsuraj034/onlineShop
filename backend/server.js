@@ -19,18 +19,7 @@ const allowedOrigins = [
     "https://online-shop-frontend-lemon.vercel.app"
 ];
 
-app.use(cors({
-    origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error("CORS not allowed"));
-        }
-    },
-    methods: "GET,POST,PUT,DELETE,OPTIONS",
-    allowedHeaders: "Content-Type,Authorization",
-    credentials: true
-}));
+app.use(cors())
 
 // 🔴 Fix: Handle Preflight (OPTIONS) Requests
 app.options('*', cors());
